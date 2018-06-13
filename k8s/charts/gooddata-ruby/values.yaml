@@ -1,0 +1,21 @@
+# Default values for lcm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  pullPolicy: IfNotPresent
+
+gooddata-ruby:
+  hello-world-brick:
+    image:
+      registry: harbor.intgdc.com
+      namespace: adam.stulpa
+      tag: latest
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 300Mi
+  requests:
+    cpu: 250m
+    memory: 200Mi

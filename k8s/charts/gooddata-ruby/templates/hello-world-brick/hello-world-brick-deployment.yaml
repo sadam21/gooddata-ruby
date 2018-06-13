@@ -1,0 +1,41 @@
+kind: Deployment
+apiVersion: apps/v1beta1
+metadata:
+  annotations:
+    icinga.gooddata.io/owner: "hds"
+    icinga.gooddata.io/scrape: "true"
+    icinga.gooddata.io/services: "vertica-tooling-monitoring"
+    icinga.gooddata.io/smart_services: |
+      max_restarts: 5,10
+      min_replicas: 0,0
+  name: {{ template "fullname" . }}-monitoring
+  labels:
+    app: vertica-tooling
+    component: hello-world-brick
+    team: tma
+    chart: "{{ .Chart.Name }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: vertica-tooling
+        component: monitoring
+        team: horizon
+    spec:
+      containers:
+      - name: python
+        {{- with index .Values "vertica-tooling" "monitoring" "image" }}
+        image: "{{ .registry }}/{{ .namespace }}/vertica-monitoring:{{ .tag }}"
+        {{- end }}
+        imagePullPolicy: {{ .Values.global.pullPolicy }}
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        securityContext:
+          runAsUser: 1112
+          allowPrivilegeEscalation: false
