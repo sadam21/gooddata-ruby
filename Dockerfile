@@ -30,7 +30,8 @@ ADD . .
 # RUN keytool -importcert -alias gooddata-2008 -file "./data/2008.crt" -keystore $JAVA_HOME/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
 # RUN keytool -importcert -alias gooddata-int -file "./data/new_ca.cer" -keystore $JAVA_HOME/lib/security/cacerts -trustcacerts -storepass 'changeit' -noprompt
 
-RUN rm -f Gemfile.lock
+#RUN rm -f Gemfile.lock
 RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && bundle"
 
-CMD [ "bundle", "exec", "./bin/hello_world_app.rb"]
+#CMD [ "bundle", "exec", "./bin/hello_world_app.rb"]
+CMD [ "./run_hello.sh"]
