@@ -4,6 +4,11 @@ MAINTAINER tma <tma@gooddata.com>
 
 RUN apk add --no-cache curl make gcc git g++ python linux-headers binutils-gold gnupg libstdc++ openssl cmake
 
+LABEL image_name="GDC LCM Hello World Brick"
+LABEL maintainer="TMA <tma@gooddata.com>"
+LABEL git_repostiory_url="https://github.com/gooddata/gooddata-ruby/"
+#LABEL parent_image="harbor.intgdc.com/base/centos:7.5.1804"
+
 # Switch to directory with sources
 WORKDIR /src
 
