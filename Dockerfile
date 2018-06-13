@@ -2,6 +2,11 @@ FROM harbor.intgdc.com/base/centos:7.5.1804
 
 MAINTAINER tma <tma@gooddata.com>
 
+LABEL image_name="GDC LCM Hello World Brick"
+LABEL maintainer="TMA <tma@gooddata.com>"
+LABEL git_repostiory_url="https://github.com/gooddata/gooddata-ruby/"
+LABEL parent_image="harbor.intgdc.com/base/centos:7.5.1804"
+
 RUN yum install -y java-1.8.0-openjdk-headless curl make gcc git g++ python linux-headers binutils-gold gnupg libstdc++ openssl cmake which \
     && yum clean all \
     && rm -rf /var/cache/yum
