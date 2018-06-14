@@ -1,32 +1,32 @@
 kind: Deployment
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 metadata:
   annotations:
-    icinga.gooddata.io/owner: "hds"
+    icinga.gooddata.io/owner: "tma"
     icinga.gooddata.io/scrape: "true"
-    icinga.gooddata.io/services: "vertica-tooling-monitoring"
+    icinga.gooddata.io/services: "gooddata-ruby-{{ jobName }}"
     icinga.gooddata.io/smart_services: |
       max_restarts: 5,10
       min_replicas: 0,0
-  name: {{ template "fullname" . }}-monitoring
+  name: {{ $jobName }}
   labels:
-    app: vertica-tooling
-    component: hello-world-brick
+    app: gooddata-ruby
+    component: bricks
     team: tma
-    chart: "{{ .Chart.Name }}"
+    chart: "{{ $jobName }}"
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: vertica-tooling
-        component: monitoring
-        team: horizon
+        app: gooddata-ruby
+        component: bricks
+        team: tma
     spec:
       containers:
-      - name: python
-        {{- with index .Values "vertica-tooling" "monitoring" "image" }}
-        image: "{{ .registry }}/{{ .namespace }}/vertica-monitoring:{{ .tag }}"
+      - name: ruby
+        {{- with index .Values "gooddata-ruby" "brick" "image" }}
+        image: "{{ .registry }}/{{ .namespace }}/gooddata-ruby:{{ .tag }}"
         {{- end }}
         imagePullPolicy: {{ .Values.global.pullPolicy }}
         env:
