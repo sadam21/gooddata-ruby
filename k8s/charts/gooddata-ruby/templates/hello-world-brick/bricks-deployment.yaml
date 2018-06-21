@@ -26,16 +26,7 @@ spec:
       containers:
       - name: ruby
         {{- with index .Values "gooddata-ruby" "brick" "image" }}
-        image: "{{ .registry }}/{{ .namespace }}/gooddata-ruby:{{ .tag }}"
+        image: "{{ .registry }}/{{ .namespace }}/hello-world-brick:{{ .tag }}"
         {{- end }}
-        imagePullPolicy: {{ .Values.global.pullPolicy }}
-        env:
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        resources:
-{{ toYaml .Values.resources | indent 10 }}
-        securityContext:
-          runAsUser: 1112
-          allowPrivilegeEscalation: false
+        command: []
+
