@@ -63,6 +63,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'restforce', '~> 2.4'
   s.add_dependency 'rest-client', '~> 2.0'
   s.add_dependency 'rubyzip', '~> 1.2'
+  s.add_dependency 'remote_syslog_logger', '~> 1.0.3'
   s.add_dependency 'salesforce_bulk_query', '~> 0.2'
   s.add_dependency 'terminal-table', '~> 1.7'
   s.add_dependency 'thread_safe'
