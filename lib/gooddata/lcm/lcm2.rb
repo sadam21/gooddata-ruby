@@ -274,6 +274,7 @@ module GoodData
 
         # Get actions for mode specified
         actions = get_mode_actions(mode)
+        log_action(mode, params, 'start', actions)
         if params.actions
           actions = params.actions.map do |action|
             "GoodData::LCM2::#{action}".split('::').inject(Object) do |o, c|
@@ -347,19 +348,29 @@ module GoodData
           results << res
         end
 
-        # Fail whole execution if there is any failed action
-        fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
-
         brick_results = {}
         actions.each_with_index do |action, index|
           brick_results[action.short_name] = results[index]
         end
 
-        {
+        # TODO: obalit try catch finally (fail_early)
+        # tests? - lcm2.spec
+        # rspec (documentation, getting started)
+        # https://relishapp.com/rspec/docs/gettingstarted
+        result = {
           actions: actions.map(&:short_name),
           results: brick_results,
-          params: params
+          params: params,
+          success: errors.empty?
         }
+
+        # Fail whole execution if there is any failed action
+        fail(JSON.pretty_generate(errors)) if strict_mode && errors.any?
+
+        result
+
+      ensure
+        log_action(mode, params, 'finished', result)
       end
 
       def run_action(action, params)
@@ -408,6 +419,12 @@ module GoodData
           table = Terminal::Table.new :headings => ['Action', 'Parameter', 'Description', 'Parameter Type'], :rows => rows
           puts table.to_s
         end
+      end
+
+      private
+
+      def log_action(mode, params, status, content)
+        File.write(params['log_directory'] + mode + '_' + status + '.json', content)
       end
     end
   end
