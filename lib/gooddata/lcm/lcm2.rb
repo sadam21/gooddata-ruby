@@ -424,7 +424,7 @@ module GoodData
       private
 
       def log_action(mode, params, status, content)
-        File.write(params['log_directory'] + mode + '_' + status + '.json', content)
+        File.write(params['log_directory'] + '/' + mode + '_' + status + '.json', content)
       end
     end
   end

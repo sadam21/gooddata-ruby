@@ -1,3 +1,5 @@
+# docker image build --build-arg SOURCE_COMMIT=`git rev-parse --verify HEAD` .
+# docker build --build-arg SOURCE_COMMIT=`git rev-parse --verify HEAD` -t harbor.intgdc.com/adam.stulpa/hello-world-brick:latest .
 FROM harbor.intgdc.com/base/centos:7.5.1804
 
 MAINTAINER tma <tma@gooddata.com>
@@ -27,6 +29,8 @@ RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && gem update --system \
     && gem install bundler rake"
 
 ENV BUNDLE_PATH=/bundle
+ARG SOURCE_COMMIT
+ENV GOODDATA_RUBY_COMMIT=$SOURCE_COMMIT
 
 ADD . .
 

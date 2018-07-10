@@ -12,6 +12,9 @@ log.info 'action=hello_world_brick_execution status=start'
 params_json = ENV['BRICK_PARAMS_JSON']
 params = params_json == nil ? {} : JSON.parse(params_json)
 
+gooddata_ruby_commit = ENV['GOODDATA_RUBY_COMMIT']
+params['gooddata_ruby_commit'] = gooddata_ruby_commit == nil ? '<unknown>' : gooddata_ruby_commit
+
 log_dir = ENV['LOG_DIRECTORY']
 params['log_directory'] = log_dir == nil ? '/tmp/' : log_dir
 
