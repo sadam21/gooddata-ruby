@@ -6,162 +6,14 @@
 
 require 'terminal-table'
 
-require_relative 'actions/actions'
 require_relative 'brick_logger'
 require_relative 'dsl/dsl'
 require_relative 'helpers/helpers'
+require_relative 'smart_hash'
+require_relative 'action_modes'
 
 module GoodData
   module LCM2
-    class SmartHash < Hash
-      @specification = nil
-      def method_missing(name, *_args)
-        data(name)
-      end
-
-      def [](variable)
-        data(variable)
-      end
-
-      def clear_filters
-        @specification = nil
-      end
-
-      def setup_filters(filter)
-        @specification = filter.to_hash
-      end
-
-      def check_specification(variable)
-        if @specification && !@specification[variable.to_sym] && !@specification[variable.to_s] \
-                          && !@specification[variable.to_s.downcase.to_sym] && !@specification[variable.to_s.downcase]
-          fail "Param #{variable} is not defined in the specification"
-        end
-      end
-
-      def data(variable)
-        check_specification(variable)
-        fetch(keys.find { |k| k.to_s.downcase.to_sym == variable.to_s.downcase.to_sym }, nil)
-      end
-
-      def key?(key)
-        return true if super
-
-        keys.each do |k|
-          return true if k.to_s.downcase.to_sym == key.to_s.downcase.to_sym
-        end
-
-        false
-      end
-
-      def respond_to_missing?(name, *_args)
-        key = name.to_s.downcase.to_sym
-        key?(key)
-      end
-    end
-
-    MODES = {
-      # Low Level Commands
-
-      actions: [
-        PrintActions
-      ],
-
-      hello: [
-        HelloWorld
-      ],
-
-      modes: [
-        PrintModes
-      ],
-
-      info: [
-        PrintTypes,
-        PrintActions,
-        PrintModes
-      ],
-
-      types: [
-        PrintTypes
-      ],
-
-      ## Bricks
-
-      release: [
-        EnsureReleaseTable,
-        CollectDataProduct,
-        SegmentsFilter,
-        CreateSegmentMasters,
-        EnsureTechnicalUsersDomain,
-        EnsureTechnicalUsersProject,
-        SynchronizeLdm,
-        CollectLdmObjects,
-        CollectMeta,
-        CollectTaggedObjects,
-        CollectComputedAttributeMetrics,
-        ImportObjectCollections,
-        SynchronizeComputedAttributes,
-        SynchronizeProcesses,
-        SynchronizeSchedules,
-        SynchronizeColorPalette,
-        SynchronizeUserGroups,
-        SynchronizeNewSegments,
-        UpdateReleaseTable
-      ],
-
-      provision: [
-        EnsureReleaseTable,
-        CollectDataProduct,
-        CollectSegments,
-        CollectClientProjects,
-        PurgeClients,
-        CollectClients,
-        AssociateClients,
-        RenameExistingClientProjects,
-        ProvisionClients,
-        EnsureTechnicalUsersDomain,
-        EnsureTechnicalUsersProject,
-        CollectDymanicScheduleParams,
-        SynchronizeETLsInSegment
-      ],
-
-      rollout: [
-        EnsureReleaseTable,
-        CollectDataProduct,
-        CollectSegments,
-        CollectSegmentClients,
-        EnsureTechnicalUsersDomain,
-        EnsureTechnicalUsersProject,
-        SynchronizeLdm,
-        SynchronizeClients,
-        SynchronizeComputedAttributes,
-        CollectDymanicScheduleParams,
-        SynchronizeETLsInSegment
-      ],
-
-      users: [
-        CollectDataProduct,
-        CollectSegments,
-        SynchronizeUsers
-      ],
-
-      user_filters: [
-        CollectDataProduct,
-        CollectUsersBrickUsers,
-        CollectSegments,
-        SynchronizeUserFilters
-      ],
-
-      schedules_execution: [
-        ExecuteSchedules
-      ],
-
-      hello_world: [
-        HelloWorld
-      ]
-    }
-
-    MODE_NAMES = MODES.keys
-
     class << self
       def convert_params(params)
         # Symbolize all keys
@@ -173,26 +25,6 @@ module GoodData
           k.downcase != k
         end
         convert_to_smart_hash(params)
-      end
-
-      def convert_to_smart_hash(params)
-        if params.is_a?(Hash)
-          res = SmartHash.new
-          params.each_pair do |k, v|
-            if v.is_a?(Hash) || v.is_a?(Array)
-              res[k] = convert_to_smart_hash(v)
-            else
-              res[k] = v
-            end
-          end
-          res
-        elsif params.is_a?(Array)
-          params.map do |item|
-            convert_to_smart_hash(item)
-          end
-        else
-          params
-        end
       end
 
       def get_mode_actions(mode)
