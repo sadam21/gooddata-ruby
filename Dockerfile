@@ -34,6 +34,9 @@ ADD ./SDK_VERSION .
 ADD ./VERSION .
 ADD ./Gemfile .
 ADD ./gooddata.gemspec .
+ADD ./lcm.rake .
+ADD ./spec ./spec
+ADD ./gooddata .
 
 RUN /bin/bash -l -c ". /usr/local/rvm/scripts/rvm && bundle install"
 
